@@ -1,11 +1,12 @@
 import discord
+from discord.ext import commands
 import random
 # Zmienna intencje przechowuje uprawnienia bota
 intents = discord.Intents.default()
 # Włączanie uprawnienia do czytania wiadomości
 intents.message_content = True
 # Tworzenie bota w zmiennej klienta i przekazanie mu uprawnień
-client = discord.Client(intents=intents)
+client = commands.Client(command_prefix="$",intents=intents)
 mone = ["reszka","orzeł"]
 @client.event
 async def on_ready():
@@ -19,6 +20,16 @@ def gen_pass(pass_length):
         password += random.choice(elements)
 
     return password
+
+def double_letter(str):
+    result = ''
+    for letter in str:
+        result += letter * 2
+    return result
+
+def secret_function(a, b):
+    return str(a) + str(b)
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -31,8 +42,21 @@ async def on_message(message):
         gen_pass(10)
     elif message.content.startswith("$rzutmoneta"):
         await message.channel.send(random.choice(mone))
+    elif message.content.startswith("$double"):
+        await message.channel.send(random.choice(mone))
+    
     else:
         await message.channel.send(message.content)
+
+@client.command
+async def double(ctx, str):
+    await ctx.send(double_letter(str))
+    
+@client.command
+async def secret(ctx, a, b):
+    await ctx.send(double_letter(a, b))
+    
+    
 
 client.run("TAJNY TOKEN IDZIE TUTAJ")
 
